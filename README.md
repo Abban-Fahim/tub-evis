@@ -1,4 +1,4 @@
-My (almost complete) solutions to excercises from Prof. Guilermo Gallego's course ["Event-based Robot Vision"](https://sites.google.com/view/guillermogallego/teaching/event-based-robot-vision), from TUB.
+My (almost complete) solutions to excercises from Prof. Guillermo Gallego's course ["Event-based Robot Vision"](https://sites.google.com/view/guillermogallego/teaching/event-based-robot-vision), from TUB.
 
 MY solution for excercise 3 (`evis_ws`) is implemented in ROS2, as opposed to the the professor's choice of ROS1 and the provided code. To ensure compatibility, I've ported the `dvs_msgs` package from the RPG's [rpg_dvs_ros](https://github.com/uzh-rpg/rpg_dvs_ros) repo. To convert any ROS1 bag, including the one used in this excercise, to ROS2, install the `rosbags` library from pip and convert it using the following command (ensuring the executable are in your path):
 
