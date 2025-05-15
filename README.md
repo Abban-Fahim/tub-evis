@@ -19,6 +19,6 @@ rosbags-convert --src slider_depth.bag --dst slider_depth_ros2
 ros2 bag play -l slider_depth_ros2/slider_depth_ros2.db3
 ```
 
-The code has
+The code has been tested on Ubuntu 22.04 with ROS Humble and python3.10, and the jupyter notebooks with python2.7.
 
 <!-- check my notes  -->
