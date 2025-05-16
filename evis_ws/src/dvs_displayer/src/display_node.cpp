@@ -79,7 +79,7 @@ class Displayer : public rclcpp::Node {
 
 
       event_sub_ = this->create_subscription<dvs_msgs::msg::EventArray>("/dvs/events", 10, event_callback);
-      img_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/dvs/image_raw", 10, img_callback);
+      img_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/reconstructed_img", 10, img_callback);
       img_pub_ = it_.advertise("/combined_img", 10);
     }
   

@@ -1,8 +1,17 @@
 ![Visualisation of event integrator](./integrator.gif)
 
-My solutions to excercises from Prof. Guillermo Gallego's course ["Event-based Robot Vision"](https://sites.google.com/view/guillermogallego/teaching/event-based-robot-vision), from Technical University Berlin (TUB).
+My solutions to exercises from Prof. Guillermo Gallego's course ["Event-based Robot Vision"](https://sites.google.com/view/guillermogallego/teaching/event-based-robot-vision), from Technical University Berlin (TUB).
 
-The solutions for excercise 3 & 4 (`evis_ws`) are implemented in ROS2, as opposed to the professor's choice of ROS1 and the provided code. To ensure compatibility, I've ported the `dvs_msgs` package from the RPG's [rpg_dvs_ros](https://github.com/uzh-rpg/rpg_dvs_ros) repo. To convert any ROS1 bag, including the one used in this excercise, to ROS2, install the `rosbags` library from pip and convert it using the following command (ensuring the executable is in your path):
+Details of the exercises are as follow:
+
+1. A simple introduction to image processing with OpenCV in python; code in `imgproc_py` directory. 
+2. A notebook containing visualisations of many common representations of event data; code in the `events_viz` directory.
+3. A ROS node for visualising event data as either: brightness-increment images, or overlaid over color frame. Quite similar in functionality to the `dvs_renderer` package from [rpg_dvs_ros](https://github.com/uzh-rpg/rpg_dvs_ros/). My package can be found in `evis_ws/src/dvs_displayer`.
+4. An implementation of Cedric Scheerlinck et al.'s [paper](https://arxiv.org/abs/1811.00386/) to reconstruct images from events asynchronously, visualised in the GIF above. My package can be found in `evis_ws/src/dvs_integrator`.
+5. An extension to the previous, focused on implementing asynchronous spatial convolution of event data and subsequent reconstruction. My package can be found in `evis_ws/src/dvs_integrator_conv`.
+6. Not started yet...
+
+The solutions for exercises 3 to 5 (`evis_ws`) are implemented in ROS2, as opposed to the professor's provided code in ROS1. To ensure compatibility, I've ported the `dvs_msgs` package from the RPG's [rpg_dvs_ros](https://github.com/uzh-rpg/rpg_dvs_ros) repo. To convert any ROS1 bag, including the one used in this exercise, to ROS2, install the `rosbags` library from pip and convert it using the following command (ensuring the executable is in your path):
 
 ```bash
 rosbags-convert --src <ros1_bag_name>.bag --dst <ros2_bag_folder name>
@@ -21,4 +30,4 @@ ros2 bag play -l slider_depth_ros2/slider_depth_ros2.db3
 
 The code has been tested on Ubuntu 22.04 with ROS Humble and python3.10, and the jupyter notebooks with python2.7.
 
-<!-- check my notes  -->
+My notes on the course, and more, can be found on my [website](https://abban-fahim.github.io/notes/notes/robotics/computer-vision/). 
