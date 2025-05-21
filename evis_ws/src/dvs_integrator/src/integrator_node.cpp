@@ -60,7 +60,7 @@ class Integrator : public rclcpp::Node {
 
         cv_bridge::CvImage img;
         double rmin, rmax;
-        minMaxLocRobust(cv_img_, rmin, rmax, 10);
+        minMaxLocRobust(cv_img_, rmin, rmax, 5);
         cv_img_ = (cv_img_ - rmin) / (rmax - rmin) * 255.;
         
         cv_img_.convertTo(img.image, CV_8U);
