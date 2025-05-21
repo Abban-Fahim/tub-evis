@@ -39,9 +39,11 @@ class IntegratorConv : public rclcpp::Node {
               
               for (int i = 0; i < ksize; i++) {
                 for (int j = 0; j < ksize; j++) {
-                  float beta = std::exp(-cutoff_freq_ * (curr_time - time_roi.at<double>(i,j)));
-                  image_roi.at<float>(i,j) = beta * image_roi.at<float>(i,j) + polarity_int * conv_kernel_.at<float>(i,j);
-                  time_roi.at<double>(i,j) = curr_time;
+                  if (conv_kernel_.at<float>(i,j) != 0) {
+                    float beta = std::exp(-cutoff_freq_ * (curr_time - time_roi.at<double>(i,j)));
+                    image_roi.at<float>(i,j) = beta * image_roi.at<float>(i,j) + polarity_int * conv_kernel_.at<float>(i,j);
+                    time_roi.at<double>(i,j) = curr_time;
+                  }
                 }
               }
             } else {
@@ -77,6 +79,9 @@ class IntegratorConv : public rclcpp::Node {
       const cv::Mat identity_k = (cv::Mat_<float>(3,3) << 0, 0, 0, 0, 1, 0, 0, 0, 0);
       const cv::Mat sobel_x = (cv::Mat_<float>(3,3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
       const cv::Mat sobel_y = (cv::Mat_<float>(3,3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
+      const float g = 0.111111f; // = 1/9
+      const cv::Mat gaussian = (cv::Mat_<float>(3,3) << g, g, g, g, g, g, g, g, g);
+      const cv::Mat laplacian = (cv::Mat_<float>(3,3) << 1, 2, 1, 2, -12, 2, 1, 2, 1);
 
       void publishState(double t) {
         // decay whole image
@@ -109,6 +114,12 @@ class IntegratorConv : public rclcpp::Node {
             break;
           case 2:
             conv_kernel_ = sobel_y;
+            break;
+          case 3:
+            conv_kernel_ = gaussian;
+            break;
+          case 4:
+            conv_kernel_ = laplacian;
             break;
         }
       }
