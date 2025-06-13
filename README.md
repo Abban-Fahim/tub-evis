@@ -29,6 +29,6 @@ rosbags-convert --src slider_depth.bag --dst slider_depth_ros2
 ros2 bag play -l slider_depth_ros2/slider_depth_ros2.db3
 ```
 
-The code has been tested on Ubuntu 22.04 with ROS Humble and python3.10, and the jupyter notebooks with python2.7.
+<!-- The code has been tested on Ubuntu 22.04 with ROS Humble and python3.10, and the jupyter notebooks with python2.7. The dependencies for the python ROS nodes can be installed through `requirements.txt`, preferably in a virtual environment -->
 
 My notes on the course, and more, can be found on my [website](https://abban-fahim.github.io/notes/notes/robotics/computer-vision/). 

@@ -8,9 +8,10 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-# import queue
 import collections
-from dvs_global_flow.warp_events import warp_events, Point2D
+from dvs_global_flow.warp_events import compute_image
+from dvs_global_flow.optimal_contrast import maximizeContrast, findInitialFlow
+from dvs_global_flow.utils import concat_horizontal
 
 class FlowEstimator(Node):
     def __init__(self):
@@ -34,7 +35,7 @@ class FlowEstimator(Node):
 
         self.event_queue = collections.deque()
         self.event_subset = []
-        self.image_size = Point2D((0,0))
+        self.image_size = (0,0)
 
         self.first_event_id = 0
         self.publish_time = self.get_clock().now()
@@ -46,7 +47,7 @@ class FlowEstimator(Node):
             self.event_queue.append(e)
 
         if self.image_size[0] == 0:
-            self.image_size = Point2D((msg.height, msg.width))
+            self.image_size = (msg.height, msg.width)
 
         packet_num = 0
         total_event_count = 0
@@ -59,14 +60,14 @@ class FlowEstimator(Node):
 
             if packet_num == 0:
                # Find initial flow
-               print("yes")
+               findInitialFlow()
             packet_num += 1
 
             print(f"packet_num = {packet_num}, total_event_count = {total_event_count}")
             print(f"events = {len(self.event_queue)}, subs = {len(self.event_subset)}")
 
             # Maximise contrast 
-            
+            maximizeContrast()
 
             # Calculate time for publishing flow
             initial_time = Time.from_msg(self.event_subset[0].ts)
