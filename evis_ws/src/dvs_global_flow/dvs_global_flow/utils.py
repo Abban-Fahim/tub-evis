@@ -1,4 +1,3 @@
-from dvs_msgs.msg import Event, EventArray
 import cv2
 import numpy as np
 import numpy.typing as npt

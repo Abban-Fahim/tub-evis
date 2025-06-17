@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
 from dvs_msgs.msg import EventArray, Event
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import PointStamped
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
@@ -29,7 +29,7 @@ class FlowEstimator(Node):
         self.create_subscription(EventArray, "/dvs/events", self.event_callback, 10)
 
         # publish global flow vector
-        self.flow_pub = self.create_publisher(Point, "/global_flow", 10)
+        self.flow_pub = self.create_publisher(PointStamped, "/global_flow", 10)
         # publish motion-compensated image
         self.img_pub = self.create_publisher(Image, "/mc_image", 10)
 
@@ -38,7 +38,7 @@ class FlowEstimator(Node):
         self.image_size = (0,0)
 
         self.first_event_id = 0
-        self.publish_time = self.get_clock().now()
+        self.flow_vel = np.array([0, 0])
         
         self.get_logger().info("Node has started!")
 
@@ -60,31 +60,42 @@ class FlowEstimator(Node):
 
             if packet_num == 0:
                # Find initial flow
-               findInitialFlow()
+               self.flow_vel = findInitialFlow(self.event_subset, self.image_size)
             packet_num += 1
 
             print(f"packet_num = {packet_num}, total_event_count = {total_event_count}")
             print(f"events = {len(self.event_queue)}, subs = {len(self.event_subset)}")
 
             # Maximise contrast 
-            maximizeContrast()
+            self.flow_vel = maximizeContrast(self.flow_vel, self.event_subset, self.image_size)
 
             # Calculate time for publishing flow
             initial_time = Time.from_msg(self.event_subset[0].ts)
             last_time = Time.from_msg(self.event_subset[-1].ts)
-            self.publish_time = Time(nanoseconds=0.5 * (initial_time.nanoseconds + last_time.nanoseconds))
+            publish_time = Time(nanoseconds=0.5 * (initial_time.nanoseconds + last_time.nanoseconds)).to_msg()
 
             # Publish flow vector
-            # self.flow_pub.publish()
+            flow_msg = PointStamped()
+            flow_msg.point.x = self.flow_vel[0]
+            flow_msg.point.y = self.flow_vel[1]
+            flow_msg.header.stamp = publish_time
+            self.flow_pub.publish(flow_msg)
             
-            # # Publish motion compensated image
-            # self.img_pub.publish()
+            # Publish motion compensated image
+            image_original = compute_image(np.array([0, 0]), self.event_subset, self.image_size, False, 0)
+            image_warped = compute_image(self.flow_vel, self.event_subset, self.image_size, False, 0)
+            combined_image = concat_horizontal(image_original, image_warped)
+            combined_image = cv2.normalize(combined_image, None, 0., 255., cv2.NORM_MINMAX)
+            # cv2.imshow("Motion Compensated Image", combined_image.astype(np.uint8))
+            # cv2.waitKey(1)
+            img_msg = self.bridge.cv2_to_imgmsg(combined_image.astype(np.uint8), encoding='mono8')
+            img_msg.header.stamp = publish_time
+            self.img_pub.publish(img_msg)
 
             # slide window to next subset of events
             num_events_slide = self.get_parameter("num_events_slide").get_parameter_value().integer_value
             if (num_events_slide <= len(self.event_queue)):
-                for i in range(num_events_slide):
-                    self.event_queue.popleft()
+                self.event_queue = collections.deque(list(self.event_queue)[num_events_slide:])
                 self.first_event_id += 0
             else:
                 self.first_event_id += num_events_slide

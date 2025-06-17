@@ -5,8 +5,10 @@ from .utils import Point2D, Mat, Size
 
 
 def warp_event(vel: Point2D, e: Event, t_ref: float) -> Point2D:
-    point = [e.x, e.y]
-    warped_point = point - (e.ts - t_ref) * vel
+    point = np.array([e.x, e.y])
+    # print("current vel: ", vel)
+    t = e.ts.sec + e.ts.nanosec * 1e-9
+    warped_point = point - (t - t_ref) * vel
     return warped_point
 
 
@@ -19,11 +21,12 @@ def accumalate_warped_event(e: Event, img_width: int, img_height: int, warped_po
     if ((xx >= 1 and xx < img_width - 2) and (yy >= 1 and yy < img_height - 2)):
         # Find distances for bilinear voting
         nearest_bin = np.floor(warped_point)
-        x_i = nearest_bin[0] - 1 if (xx - nearest_bin[0]) <= 0.5 else nearest_bin[0]
-        y_i = nearest_bin[1] - 1 if (yy - nearest_bin[1]) <= 0.5 else nearest_bin[1]
+        x_i = int(nearest_bin[0] - 1 if (xx - nearest_bin[0]) <= 0.5 else nearest_bin[0])
+        y_i = int(nearest_bin[1] - 1 if (yy - nearest_bin[1]) <= 0.5 else nearest_bin[1])
         dx = xx - (x_i + 0.5)
         dy = yy - (y_i + 0.5)
         
+        # print(y_i, x_i)
         image_warped[y_i,x_i] += p * (1 - dx) * (1 - dy)
         image_warped[y_i,x_i+1] += p * dx * (1 - dy)
         image_warped[y_i+1,x_i] += p * (1 - dx) * dy
@@ -33,8 +36,8 @@ def accumalate_warped_event(e: Event, img_width: int, img_height: int, warped_po
 
 
 
-def compute_image(vel: Point2D, events_subset: list[Event], img_size: Size, image_warped: Mat, use_polarity: bool, blur_sigma: float) -> Mat:
-    # image_warped = cv2.Mat
+def compute_image(vel: Point2D, events_subset: list[Event], img_size: Size, use_polarity: bool, blur_sigma: float) -> Mat:
+    image_warped = np.zeros(img_size, dtype=np.float32)
 
     t_ref = events_subset[0].ts.sec + events_subset[0].ts.nanosec * 1e-9
     for e in events_subset:
