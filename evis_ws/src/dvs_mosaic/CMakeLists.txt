@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(dvs_integrator_conv)
+project(dvs_mosaic)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -13,16 +13,28 @@ find_package(cv_bridge REQUIRED)
 find_package(dvs_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(image_transport REQUIRED)
+find_package(image_geometry REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+find_package(eigen3_cmake_module REQUIRED)
+find_package(Eigen3 REQUIRED)
 
-add_executable(integrator_conv_node src/integrator_conv_node.cpp)
-ament_target_dependencies(integrator_conv_node rclcpp std_msgs cv_bridge dvs_msgs sensor_msgs image_transport)
+add_executable(mosaic_node src/mosaic_node.cpp src/laplace.cpp)
+ament_target_dependencies(mosaic_node rclcpp std_msgs cv_bridge dvs_msgs sensor_msgs image_transport image_geometry ament_index_cpp)
 
-target_include_directories(integrator_conv_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(integrator_conv_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_include_directories(mosaic_node PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>
+)
 
-install(TARGETS integrator_conv_node
+include_directories(/usr/include)
+link_directories(/usr/lib/x86_64-linux-gnu)
+target_link_libraries(mosaic_node fftw3 fftw3_threads)
+target_link_libraries(mosaic_node Eigen3::Eigen)
+
+
+target_compile_features(mosaic_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+install(TARGETS mosaic_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
