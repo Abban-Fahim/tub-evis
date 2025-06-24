@@ -29,8 +29,9 @@ void Mosaic::precomputeBearingVectors()
 */
 void Mosaic::project_EquirectangularProjection(const cv::Point3d& pt_3d, cv::Point2f& pt_on_mosaic)
 {
-  // FILL IN  pt_on_mosaic
-
+  float X = pt_3d.x; float Y = pt_3d.y; float Z = pt_3d.z;
+  pt_on_mosaic.x = 0.5*mosaic_width_ + 0.5*M_1_PI*mosaic_width_ * atan2(X, Z);
+  pt_on_mosaic.y = 0.5*mosaic_height_ + M_1_PI*mosaic_height_ * asin(Y / sqrt(X*X + Y*Y + Z*Z));
 }
 
 
@@ -80,7 +81,7 @@ bool Mosaic::rotationAt(const rclcpp::Time& t_query, cv::Matx33d& Rot_interp)
   auto T_pose = (T1_.translation() - T0_.translation())*delta_t;
   auto T_quat = Eigen::Quaterniond(T0_.linear()).slerp(delta_t, Eigen::Quaterniond(T1_.linear()));
   Transformation T;
-  T.translate(T_pose).rotate(T_quat);
+  T.rotate(T_quat).pretranslate(T_pose);
 
   // Extract rotational part
   auto R = T.rotation();

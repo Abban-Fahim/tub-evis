@@ -32,7 +32,7 @@ void Mosaic::loadPoses()
         const Eigen::Vector3d position(x,y,z);
         const Eigen::Quaterniond quat(qw,qx,qy,qz);
         Transformation T;
-        T.translate(position).rotate(quat);
+        T.rotate(quat).pretranslate(position);
         poses_.insert( std::pair<rclcpp::Time, Transformation>(rclcpp::Time(sec,nsec), T) );
         count++;
       }
@@ -45,11 +45,10 @@ void Mosaic::loadPoses()
   // Remove offset: pre-multiply by the inverse of the first pose so that
   // the first rotation becomes the identity (and events project in the middle of the mosaic)
 
-  // FILL IN... get the first control pose
-  //Transformation T0 = ... ;
-  Transformation T0;
+  // Get the first control pose
+  Transformation T0 = poses_.begin()->second;
 
-  size_t control_pose_idx = 0u;
+  // size_t control_pose_idx = 0u;
   for(auto it : poses_)
   {
     // VLOG(3) << "--Control pose #" << control_pose_idx++ << ". time = " << it.first.seconds();
@@ -58,13 +57,13 @@ void Mosaic::loadPoses()
     poses_[it.first] = (T0.inverse()) * it.second;
   }
 
-  control_pose_idx = 0u;
-  for(auto it : poses_)
-  {
-    // VLOG(3) << "--Control pose #" << control_pose_idx++ << ". time = " << it.first.seconds();
-    // VLOG(3) << "---------------------T normalized = ";
-    // VLOG(3) << it.second;
-  }
+  // control_pose_idx = 0u;
+  // for(auto it : poses_)
+  // {
+  //   VLOG(3) << "--Control pose #" << control_pose_idx++ << ". time = " << it.first.seconds();
+  //   VLOG(3) << "---------------------T normalized = ";
+  //   VLOG(3) << it.second;
+  // }
 }
 
 }
