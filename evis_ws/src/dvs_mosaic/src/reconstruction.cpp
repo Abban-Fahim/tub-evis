@@ -1,6 +1,5 @@
 #include <dvs_mosaic/laplace.h>
 #include <dvs_mosaic/reconstruction.h>
-
 #include <boost/multi_array.hpp>
 #include <glog/logging.h>
 
@@ -11,9 +10,9 @@ namespace poisson
 void reconstructBrightnessFromGradientMap(const cv::Mat& grad_map,
                                                 cv::Mat* map_reconstructed)
 {
-  CHECK_EQ(grad_map.type(), CV_32FC2);
-  CHECK_GT(grad_map.cols, 0);
-  CHECK_GT(grad_map.rows, 0);
+  // CHECK_EQ(grad_map.type(), CV_32FC2);
+  // CHECK_GT(grad_map.cols, 0);
+  // CHECK_GT(grad_map.rows, 0);
   const cv::Size img_size = grad_map.size();
 
   // Compute the right hand side of Poisson eq.

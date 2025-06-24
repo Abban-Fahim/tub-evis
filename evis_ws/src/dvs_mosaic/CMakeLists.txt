@@ -18,7 +18,8 @@ find_package(ament_index_cpp REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 
-add_executable(mosaic_node src/mosaic_node.cpp src/laplace.cpp)
+# Adding all the source files containing other functions to the same executable
+add_executable(mosaic_node src/mosaic_node.cpp src/image_util.cpp src/laplace.cpp src/poses_groundtruth.cpp src/geometry.cpp src/reconstruction.cpp src/publish.cpp src/mapping.cpp)
 ament_target_dependencies(mosaic_node rclcpp std_msgs cv_bridge dvs_msgs sensor_msgs image_transport image_geometry ament_index_cpp)
 
 target_include_directories(mosaic_node PUBLIC
@@ -31,11 +32,13 @@ link_directories(/usr/lib/x86_64-linux-gnu)
 target_link_libraries(mosaic_node fftw3 fftw3_threads)
 target_link_libraries(mosaic_node Eigen3::Eigen)
 
-
 target_compile_features(mosaic_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 install(TARGETS mosaic_node
   DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY data/
+  DESTINATION share/${PROJECT_NAME}/data)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

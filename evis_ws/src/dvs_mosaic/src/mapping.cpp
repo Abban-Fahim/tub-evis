@@ -9,7 +9,7 @@ void processEventForMap(const dvs_msgs::msg::Event& ev,
   const cv::Matx33d& Rot, const cv::Matx33d& Rot_prev)
 {
   const double dt_ev = t_ev - t_prev;
-  CHECK_GT(dt_ev,0) << "Non-positive dt_ev"; // Two events at same pixel with same timestamp
+  // CHECK_GT(dt_ev,0) << "Non-positive dt_ev"; // Two events at same pixel with same timestamp
 
   // FILL in ... lots of gaps. This function is mostly empty
 

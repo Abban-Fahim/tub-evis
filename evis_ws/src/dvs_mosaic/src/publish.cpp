@@ -1,7 +1,7 @@
 #include <dvs_mosaic/mosaic.h>
 #include <dvs_mosaic/image_util.h>
 #include <dvs_mosaic/reconstruction.h>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 
 
 namespace dvs_mosaic
@@ -13,14 +13,14 @@ namespace dvs_mosaic
 void Mosaic::publishMap()
 {
   // Publish the current map state
-  VLOG(1) << "publishMap()";
+  // VLOG(1) << "publishMap()";
 
   if ( time_map_pub_.getNumSubscribers() > 0 )
   {
     // Time map. Fill content in appropriate range [0,255] and publish
     // Happening at the camera's image plane
     cv_bridge::CvImage cv_image_time;
-    cv_image_time.header.stamp = ros::Time::now();
+    cv_image_time.header.stamp = rclcpp::Time();
     cv_image_time.encoding = "mono8";
     image_util::normalize(time_map_, cv_image_time.image, 15.);
     time_map_pub_.publish(cv_image_time.toImageMsg());
@@ -28,7 +28,7 @@ void Mosaic::publishMap()
 
   // Various mosaic-related topics
   cv_bridge::CvImage cv_image;
-  cv_image.header.stamp = ros::Time::now();
+  cv_image.header.stamp = rclcpp::Time();
   cv_image.encoding = "mono8";
   if ( mosaic_pub_.getNumSubscribers() > 0 )
   {
@@ -64,14 +64,14 @@ void Mosaic::publishMap()
 */
 void Mosaic::publishPose()
 {
-  if (pose_pub_.getNumSubscribers() <= 0)
+  if (pose_pub_->get_subscription_count() <= 0)
     return;
 
-  VLOG(1) << "publishPose()";
-  geometry_msgs::PoseStamped pose_msg;
+  // VLOG(1) << "publishPose()";
+  geometry_msgs::msg::PoseStamped pose_msg;
   // FILL IN ... when tracking part is implemented
 
-  pose_pub_.publish(pose_msg);
+  pose_pub_->publish(pose_msg);
 }
 
 }

@@ -3,7 +3,6 @@
 #include <memory.h>
 #include <string.h>
 #include <deque>
-#include <glog/logging.h>
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -31,7 +30,6 @@ using Transformation = Eigen::Affine3d;
 class Mosaic : public rclcpp::Node {
   public:
     Mosaic();
-    virtual ~Mosaic();
 
   private:
     // Private handles for ROS functionality

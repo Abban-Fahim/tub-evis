@@ -1,7 +1,5 @@
 #include <dvs_mosaic/mosaic.h>
 #include <math.h>
-#include <glog/logging.h>
-
 
 namespace dvs_mosaic
 {
@@ -11,7 +9,7 @@ namespace dvs_mosaic
 */
 void Mosaic::precomputeBearingVectors()
 {
-  VLOG(2) << "Start precomputeBearingVectors";
+  // VLOG(2) << "Start precomputeBearingVectors";
   for(int y=0; y < sensor_height_; y++)
   {
     for(int x=0; x < sensor_width_; x++)
@@ -21,7 +19,7 @@ void Mosaic::precomputeBearingVectors()
       precomputed_bearing_vectors_.push_back(bearing_vec);
     }
   }
-  VLOG(2) << "End precomputeBearingVectors " << precomputed_bearing_vectors_.size();
+  // VLOG(2) << "End precomputeBearingVectors " << precomputed_bearing_vectors_.size();
 }
 
 
@@ -48,16 +46,16 @@ bool Mosaic::rotationAt(const rclcpp::Time& t_query, cv::Matx33d& Rot_interp)
   auto it1 = poses_.upper_bound(t_query);
   if(it1 ==  poses_.begin())
   {
-    LOG_FIRST_N(WARNING, 5) << "Cannot extrapolate in the past. Requested pose: "
-                            << t_query.nanoseconds() << " but the earliest pose available is at time: "
-                            << poses_.begin()->first.nanoseconds();
+    // LOG_FIRST_N(WARNING, 5) << "Cannot extrapolate in the past. Requested pose: "
+    //                         << t_query.nanoseconds() << " but the earliest pose available is at time: "
+    //                         << poses_.begin()->first.nanoseconds();
     return false;
   }
   else if(it1 == poses_.end())
   {
-    LOG_FIRST_N(WARNING, 5) << "Cannot extrapolate in the future. Requested pose: "
-                            << t_query.nanoseconds() << " but the latest pose available is at time: "
-                            << (poses_.rbegin())->first.nanoseconds();
+    // LOG_FIRST_N(WARNING, 5) << "Cannot extrapolate in the future. Requested pose: "
+    //                         << t_query.nanoseconds() << " but the latest pose available is at time: "
+    //                         << (poses_.rbegin())->first.nanoseconds();
     return false;
   }
   else
@@ -87,7 +85,7 @@ bool Mosaic::rotationAt(const rclcpp::Time& t_query, cv::Matx33d& Rot_interp)
   // Extract rotational part
   auto R = T.rotation();
 
-  VLOG(3) << R;
+  // VLOG(3) << R;
 
   for (int i=0; i<3; i++)
     for (int j=0; j<3; j++)

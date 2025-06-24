@@ -13,7 +13,7 @@ Mosaic::Mosaic() : rclcpp::Node("integrator_conv"), it_(shared_from_this()) {
   float grad_init_variance = this->get_parameter("variance_init_grad").as_double();
   
   // Create event subscription
-  event_sub_ = create_subscription<dvs_msgs::msg::EventArray>("/dvs/events", 10, Mosaic::eventsCallback);
+  event_sub_ = create_subscription<dvs_msgs::msg::EventArray>("/dvs/events", 10, std::bind(&Mosaic::eventsCallback, this, std::placeholders::_1));
 
   // Create publishers
   mosaic_pub_ = it_.advertise("/mosaic_img", 10);
@@ -37,7 +37,8 @@ void Mosaic::eventsCallback(const dvs_msgs::msg::EventArray::ConstPtr& msg) {
   static unsigned int packet_number = 0;
   static unsigned long total_event_count = 0;
   total_event_count += msg->events.size();
-  VLOG(1) << "Packet # " << packet_number << "  event# " << total_event_count << "  queue_size:" << events_.size();
+  RCLCPP_DEBUG(get_logger(), "Packet # %d  event# %d  queue_size: %lu", 
+    packet_number, total_event_count, events_.size());
 
   // Initialize time map (negative indicates first init)
   if (packet_number == 0) {
@@ -49,12 +50,14 @@ void Mosaic::eventsCallback(const dvs_msgs::msg::EventArray::ConstPtr& msg) {
 
 }
 
+
+};
+
+
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<Mosaic>());
+  rclcpp::spin(std::make_shared<dvs_mosaic::Mosaic>());
   rclcpp::shutdown();
   return 0;
 }
-
-};

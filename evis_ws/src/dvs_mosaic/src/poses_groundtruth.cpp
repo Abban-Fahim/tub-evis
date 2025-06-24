@@ -1,6 +1,6 @@
 #include <dvs_mosaic/mosaic.h>
 #include <fstream>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 namespace dvs_mosaic
@@ -12,11 +12,11 @@ namespace dvs_mosaic
 void Mosaic::loadPoses()
 {
   std::ifstream input_file;
-  input_file.open(ament_index_cpp::get_package_share_directory("dvs_mosaic") + "/data/synth1/poses.txt");
+  input_file.open(ament_index_cpp::get_package_share_directory("dvs_mosaic") + "/data/poses.txt");
   // Open file to read data
   if (input_file.is_open())
   {
-    VLOG(2) << "Control poses file opened";
+    // VLOG(2) << "Control poses file opened";
 
     int count = 0;
     std::string line;
@@ -37,7 +37,7 @@ void Mosaic::loadPoses()
         count++;
       }
     }
-    VLOG(2) << "count poses = " << count;
+    // VLOG(2) << "count poses = " << count;
 
     input_file.close();
   }
@@ -52,8 +52,8 @@ void Mosaic::loadPoses()
   size_t control_pose_idx = 0u;
   for(auto it : poses_)
   {
-    VLOG(3) << "--Control pose #" << control_pose_idx++ << ". time = " << it.first.seconds();
-    VLOG(3) << "--T = ";
+    // VLOG(3) << "--Control pose #" << control_pose_idx++ << ". time = " << it.first.seconds();
+    // VLOG(3) << "--T = ";
     // VLOG(3) << it.second;
     poses_[it.first] = (T0.inverse()) * it.second;
   }
@@ -61,8 +61,8 @@ void Mosaic::loadPoses()
   control_pose_idx = 0u;
   for(auto it : poses_)
   {
-    VLOG(3) << "--Control pose #" << control_pose_idx++ << ". time = " << it.first.seconds();
-    VLOG(3) << "---------------------T normalized = ";
+    // VLOG(3) << "--Control pose #" << control_pose_idx++ << ". time = " << it.first.seconds();
+    // VLOG(3) << "---------------------T normalized = ";
     // VLOG(3) << it.second;
   }
 }
