@@ -14,13 +14,14 @@ find_package(dvs_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(image_geometry REQUIRED)
+find_package(camera_info_manager REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 # Adding all the source files containing other functions to the same executable
 add_executable(mosaic_node src/mosaic_node.cpp src/image_util.cpp src/laplace.cpp src/poses_groundtruth.cpp src/geometry.cpp src/reconstruction.cpp src/publish.cpp src/mapping.cpp)
-ament_target_dependencies(mosaic_node rclcpp std_msgs cv_bridge dvs_msgs sensor_msgs image_transport image_geometry ament_index_cpp)
+ament_target_dependencies(mosaic_node rclcpp std_msgs cv_bridge dvs_msgs sensor_msgs image_transport image_geometry camera_info_manager ament_index_cpp)
 
 target_include_directories(mosaic_node PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

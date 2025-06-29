@@ -1,7 +1,6 @@
 #include <dvs_mosaic/mosaic.h>
 #include <fstream>
 // #include <glog/logging.h>
-#include <ament_index_cpp/get_package_share_directory.hpp>
 
 namespace dvs_mosaic
 {

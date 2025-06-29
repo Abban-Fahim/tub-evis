@@ -12,6 +12,8 @@
 #include <image_transport/image_transport.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <image_geometry/pinhole_camera_model.h>
+#include <camera_info_manager/camera_info_manager.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <opencv2/core/core.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -30,11 +32,11 @@ using Transformation = Eigen::Affine3d;
 class Mosaic : public rclcpp::Node {
   public:
     Mosaic();
+    void init();
 
   private:
     // Private handles for ROS functionality
-    rclcpp::Node::SharedPtr node_handle_;
-    image_transport::ImageTransport it_;
+    std::unique_ptr<image_transport::ImageTransport> it_;
 
     // Callback functions
     void eventsCallback(const dvs_msgs::msg::EventArray::ConstPtr& msg);
